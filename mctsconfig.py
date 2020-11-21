@@ -3,7 +3,8 @@ import os
 import pandas as pd
 import glob
 
-configs_directory = "/home/max/Documents/ai/CatanAI/configs/"
+os.environ['MAIN_DIR'] = '/Users/evanvonoehsen/Documents/ai/' #/home/max/Documents/ai/
+configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 
 class MCTSConfig:
     """Creates an holds an MCTS config"""
@@ -62,7 +63,7 @@ class MCTSConfig:
         file_name = glob.glob('results/'+ self.get_name() + '*' + '/results.txt')[0]
         num_games = self.get_num_games()
         # Look in results folder for this name
-        df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
+        df = pd.read_csv(os.getenv('MAIN_DIR') + 'StacSettlers/target/' + file_name, sep='\t')
         total_wins = sum(df['Winner1'])
         self.fitness = total_wins/num_games
 
