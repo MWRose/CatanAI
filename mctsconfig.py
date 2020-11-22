@@ -67,7 +67,7 @@ class MCTSConfig:
 
     def set_fitness(self):
         """ Takes a MCTSConfig and returns its fitness (win rate)"""
-        file_name = glob.glob('results/'+ self.get_name() + '*' + '/results.txt')[0]
+        file_name = glob.glob('results/'+ self.get_name() + '*' + '/summary.txt')[0]
         # num_games = self.get_num_games()
         # # Look in results folder for this name
         # df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
