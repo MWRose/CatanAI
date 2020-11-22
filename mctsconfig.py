@@ -15,6 +15,7 @@ class MCTSConfig:
         self.max_tree_size = max_tree_size
         self.min_visits = min_visits
         self.rave = rave
+        self.puct = False
         self.mcts_line = ""
         self.name = str(datetime.now().time())
         self.config_path = configs_directory + self.name
@@ -28,10 +29,15 @@ class MCTSConfig:
         Creates the line to be added to the config file
         """
         # Configure the line to be added to the config file
-        self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MINVISITS:{min_visits}|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
-            iterations=self.iterations, cp=self.cp, min_visits=self.min_visits, max_tree_size=self.max_tree_size)
+        # self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MINVISITS:{min_visits}|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
+        #   iterations=self.iterations, cp=self.cp, min_visits=self.min_visits, max_tree_size=self.max_tree_size)
+        self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
+            iterations=self.iterations, cp=self.cp, max_tree_size=self.max_tree_size)
         if self.rave:
-            self.mcts_line += "|MCTS_UCT_RAVE"
+            self.mcts_line += "|MCTS_UCT_RAVE:3"
+        elif self.puct:
+            self.mcts_line += "|MCTS_PUCT"
+
             
 
     def create_config_file(self):
@@ -48,9 +54,10 @@ class MCTSConfig:
             "~",
             self.name,
             self.mcts_line,
-            "Agent=3,Stac,stac,TRY_N_BEST_BUILD_PLANS:0|FAVOUR_DEV_CARDS:-5"
+            "Agent=3,Random,random"
         ]
 
+        # "Agent=3,Stac,stac,TRY_N_BEST_BUILD_PLANS:0|FAVOUR_DEV_CARDS:-5"
         # If there is a file path write it
         assert self.config_path, "File path not specified for config {}".format(self.name)
         with open(self.config_path, "w") as config_file:
@@ -60,11 +67,20 @@ class MCTSConfig:
     def set_fitness(self):
         """ Takes a MCTSConfig and returns its fitness (win rate)"""
         file_name = glob.glob('results/'+ self.get_name() + '*' + '/results.txt')[0]
-        num_games = self.get_num_games()
-        # Look in results folder for this name
-        df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
-        total_wins = sum(df['Winner1'])
-        self.fitness = total_wins/num_games
+        # num_games = self.get_num_games()
+        # # Look in results folder for this name
+        # df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
+        # total_wins = sum(df['Winner1'])
+        # self.fitness = total_wins/num_games
+
+        with open(file_name, "r") as file:
+            lines = file.readlines()
+            for line in lines:
+                line_sep = line.split()
+                if len(line_sep) > 0 and line_sep[0] == "TypedMCTS":
+                    self.fitness = float(line_sep[1])
+                    break
+
 
     def get_iterations(self):
         return self.iterations
