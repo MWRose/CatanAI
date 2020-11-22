@@ -24,7 +24,7 @@ import csv
     - Pros: Runs fast, lots of transparency in the code
 """
 
-configs_directory = "/home/max/Documents/ai/CatanAI/configs/"
+configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 ITERATION_RANGE = 1000
 
 
@@ -76,7 +76,7 @@ def test_iterations(iters):
 
 # call our ga() function here
 def main():
-    os.chdir("/home/max/Documents/ai/StacSettlers/target")
+    os.chdir(os.getenv('MAIN_DIR') + "StacSettlers/target")
     # print(os.getcwd())
     # simulate('../StacSettlers/target/config-simple.txt')
     iteration_configs = test_iterations([800, 1200])
