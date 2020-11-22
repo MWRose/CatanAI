@@ -5,11 +5,14 @@ import numpy as np
 class MCTSPlayer:
     def __init__(self):
 
+        GENOME_SIZE = 3
+        
         MAX_ITERATIONS = 10000
         MAX_CP = 5
         RAVE_THRESHOLD = 0.333
         PUCT_THRESHOLD = 0.666
-        GENOME_SIZE = 3
+    
+        #min visits
 
 
         self.config = MCTSConfig(0,0,0,0,0,0)

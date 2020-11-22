@@ -9,7 +9,7 @@ class Environment:
     def create_population(self):
         for i in range(self.population_size):
             self.population.append(MCTSPlayer())
-
+        return population
 def main():
     pass
 
