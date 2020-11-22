@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import glob
 
-os.environ['MAIN_DIR'] = '/Users/evanvonoehsen/Documents/ai/' #/home/max/Documents/ai/
+os.environ['MAIN_DIR'] = "/home/max/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 
 class MCTSConfig:
@@ -22,6 +22,8 @@ class MCTSConfig:
         self.config_path = configs_directory + self.name
         self.num_games = num_games
         self.fitness = 0.0
+        self.seconds = 0
+        self.turns = 0
         self.create_mcts_line()
         self.create_config_file()
 
@@ -76,6 +78,9 @@ class MCTSConfig:
 
         with open(file_name, "r") as file:
             lines = file.readlines()
+            self.games = lines[0].strip()[6:]
+            self.seconds = lines[1].strip()[8:]
+            self.turns = lines[2].strip()[15:]
             for line in lines:
                 line_sep = line.split()
                 if len(line_sep) > 0 and line_sep[0] == "TypedMCTS":
@@ -109,6 +114,12 @@ class MCTSConfig:
 
     def get_fitness(self):
         return self.fitness
+
+    def get_seconds(self):
+        return self.seconds
+
+    def get_turns(self):
+        return self.turns
 
 
 

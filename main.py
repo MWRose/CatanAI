@@ -23,7 +23,7 @@ import csv
     - Cons: Can't match up opponents wtih different strategies
     - Pros: Runs fast, lots of transparency in the code
 """
-
+os.environ['MAIN_DIR'] = "/home/max/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 ITERATION_RANGE = 1000
 
@@ -55,7 +55,7 @@ def run_config(config: MCTSConfig):
 def test_iterations(iters):
     mcts_config_iterations = []
     for iterations in iters:
-        mcts_config = MCTSConfig(iterations, .5, 100000, 1, False, 10)
+        mcts_config = MCTSConfig(iterations, .5, 1000000, 1, False, 1)
         run_config(mcts_config)
         mcts_config.set_fitness()
         mcts_config_iterations.append(mcts_config)
@@ -79,19 +79,25 @@ def main():
     os.chdir(os.getenv('MAIN_DIR') + "StacSettlers/target")
     # print(os.getcwd())
     # simulate('../StacSettlers/target/config-simple.txt')
-    iteration_configs = test_iterations([800, 1200])
+    iteration_configs = test_iterations(range(100, 300, 100))
     fitnesses = []
     iterations = []
+    games = []
+    seconds = []
+    turns = []
     for config in iteration_configs:
         fitnesses.append(config.get_fitness())
         iterations.append(config.get_iterations())
-
+        games.append(config.get_num_games())
+        seconds.append(config.get_seconds())
+        turns.append(config.get_turns())
 
     with open("/home/max/Documents/ai/CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(["iterations", "fitness", "games", "seconds", "turns"])
         for i in range(len(fitnesses)):
-            spamwriter.writerow([iterations[i], fitnesses[i]])
+            spamwriter.writerow([iterations[i], fitnesses[i], games[i], seconds[i], turns[i]])
 
     plt.plot(iterations, fitnesses)
     plt.xlabel("Iterations")

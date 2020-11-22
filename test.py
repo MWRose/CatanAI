@@ -1,12 +1,17 @@
 
 
 """ Takes a MCTSConfig and returns its fitness (win rate)"""
-file_name = "/home/max/Documents/ai/StacSettlers/target/results/19:21:51.502961_Sat_Nov_21_19_21_51_PST_2020_b1152fe5-3163-4f87-806e-d158a17ce5f7/summary.txt"
+file_name = "/home/max/Documents/ai/StacSettlers/target/results/21:49:50.479644_Sat_Nov_21_21_49_50_PST_2020_ebbb6166-0cbc-470a-9834-43c742801d0f/summary.txt"
 # Look in results folder for this name
 fitness = 0
 with open(file_name, "r") as file:
     lines = file.readlines()
-    print(lines[0], lines[1], lines[2])
+    games = lines[0].strip()[6:]
+    seconds = lines[1].strip()[8:]
+    turns = lines[2].strip()[15:]
+    print(games)
+    print(seconds)
+    print(turns)
     for line in lines:
         line_sep = line.split()
         if len(line_sep) > 0 and line_sep[0] == "TypedMCTS":
