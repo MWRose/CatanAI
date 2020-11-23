@@ -21,9 +21,9 @@ def ga(env, pop_count, keep, select, steps):
     for i in range(0, steps):
         print("new step: " + str(i))
         for individual in pop:
-            individual.calculate_fitness()
+            fitness = individual.calculate_fitness()
             print("individual with genome: " + str(individual.genome))
-            print("fitness: " + str(individual.fitness()))
+            print("fitness: " + str(fitness))
         
         pop.sort()
         evolve_step(pop, new_pop, env, keep, select)
@@ -38,23 +38,23 @@ def ga(env, pop_count, keep, select, steps):
         
 def evolve_step(pop, new_pop, env, keep, select):
     new_pop.clear()
-    keep_amt = int(pop.len() * keep)
+    keep_amt = int(len(pop) * keep)
 
     for i in range(0,keep_amt):
         new_pop.append(pop[i])
 
-    selection_amt = int(pop.len() * select)
+    selection_amt = int(len(pop) * select)
 
     for _ in range(0, selection_amt):
         selections = selection(pop, 4)
-        child = pop[selections[0]].crossover(pop[selections[1]])
+        child = selections[0].crossover_uniform(selections[1])
         child.mutate()
         new_pop.append(child)
     
-    for _ in range(new_pop.len(), pop.len()):
+    for _ in range(len(new_pop), len(pop)):
         new_pop.append(MCTSPlayer())
 
-    assert pop.len() == new_pop.len()
+    assert len(pop) == len(new_pop)
 
 
 # randomly select k competitors and select the strongest one
@@ -62,7 +62,7 @@ def selection(pop, k):
     # TODO: make better my just sorting
     competitors = random.sample(pop, k)
     competitors.sort()
-    return competitors[0]
+    return [competitors[0], competitors[1]]
 
 
 def main():

@@ -53,7 +53,7 @@ class MCTSConfig:
             "UseParser=false",
             "ChatNegotiation=true",
             "FullyObservable=true",
-            "PlayerToStart=-1",
+            "PlayerToStart=0",
             "~",
             self.name,
             self.mcts_line,
@@ -68,8 +68,10 @@ class MCTSConfig:
             config_file.write(join_lines)
 
     def set_fitness(self):
-        """ Takes a MCTSConfig and returns its fitness (win rate)"""
+        """Takes a MCTSConfig and returns its fitness (win rate)"""
         file_name = glob.glob('results/'+ self.get_name() + '*' + '/summary.txt')[0]
+        print("glob found results file:")
+        print(file_name)
         # num_games = self.get_num_games()
         # # Look in results folder for this name
         # df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
@@ -87,6 +89,7 @@ class MCTSConfig:
                     self.fitness = float(line_sep[1])
                     break
 
+        return self.fitness
 
     def get_iterations(self):
         return self.iterations

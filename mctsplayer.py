@@ -33,18 +33,22 @@ class MCTSPlayer:
 
     def crossover_uniform(self, other):
         new_player = MCTSPlayer()
-
+        self_genome = self.get_genome()
+        other_genome = other.get_genome()
         for i in range(0,self.GENOME_SIZE):
-            new_player.genome[i] = other.genome[i] if random.randint(0,1) == 0 else self.genome[i]
+            new_player.genome[i] = other_genome[i] if random.randint(0,1) == 0 else self_genome[i]
         new_player.config = new_player.update_config()
 
+        return new_player
+        
     def fitness(self) -> float:
         return self.fitness
 
-    def calculate_fitness(self):
+    def calculate_fitness(self) -> float:
         #run the simulations
         self.run_config()
         self.fitness = self.config.set_fitness()
+        return self.fitness
 
     def __eq__(self, other):
         return self.fitness == other.fitness
@@ -52,6 +56,9 @@ class MCTSPlayer:
     def __lt__(self, other):
         return self.fitness < other.fitness
 
+    def get_genome(self):
+        return self.genome
+    
     def update_config(self):
         # self.config = self.config
         iterations = self.genome[0] * self.MAX_ITERATIONS
