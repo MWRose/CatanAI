@@ -10,7 +10,7 @@ class MCTSPlayer:
 
         self.GENOME_SIZE = 3
 
-        self.MAX_ITERATIONS = 10000
+        self.MAX_ITERATIONS = 5000
         self.MAX_CP = 5
         self.RAVE_THRESHOLD = 0.333
         self.PUCT_THRESHOLD = 0.666
@@ -76,5 +76,3 @@ class MCTSPlayer:
 
     def __str__(self):
         return "[" + str(self.config.iterations) + ", " + str(self.config.cp) + ", " +  str(self.config.max_tree_size) + ", " + str(self.fitness) + "]"
-
-        

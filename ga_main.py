@@ -19,8 +19,11 @@ def ga(env, pop_count, keep, select, steps):
     new_pop = []
 
     for i in range(0, steps):
+        print("new step: " + str(i))
         for individual in pop:
             individual.calculate_fitness()
+            print("individual with genome: " + str(individual.genome))
+            print("fitness: " + str(individual.fitness()))
         
         pop.sort()
         evolve_step(pop, new_pop, env, keep, select)
