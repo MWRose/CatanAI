@@ -61,8 +61,7 @@ class MCTSPlayer:
         rave = self.genome[2] >= self.RAVE_THRESHOLD and self.genome[2] < self.PUCT_THRESHOLD
         puct = self.genome[2] >= self.PUCT_THRESHOLD
         num_games = 4
-        tmpconfig = MCTSConfig(int(iterations), cp, 10000, 1, rave, num_games)
-        tmpconfig.set_puct(puct)
+        tmpconfig = MCTSConfig(int(iterations), cp, 10000, 1, rave, puct, num_games)
         # self.config = tmpconfig
         return tmpconfig
 

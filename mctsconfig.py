@@ -10,13 +10,13 @@ class MCTSConfig:
     """Creates an holds an MCTS config"""
 
     def __init__(self, iterations: int, cp: float,
-                 max_tree_size: int, min_visits: int, rave: bool, num_games: int):
+                 max_tree_size: int, min_visits: int, rave: bool, puct: bool, num_games: int):
         self.iterations = iterations
         self.cp = cp
         self.max_tree_size = max_tree_size
         self.min_visits = min_visits
         self.rave = rave
-        self.puct = False
+        self.puct = puct
         self.mcts_line = ""
         self.name = str(datetime.now().time())
         self.config_path = configs_directory + self.name
