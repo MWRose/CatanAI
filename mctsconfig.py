@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import glob
 
-os.environ['MAIN_DIR'] = "/Users/evanvonoehsen/Documents/ai"
+os.environ['MAIN_DIR'] = "/Users/evanvonoehsen/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 
 class MCTSConfig:
@@ -121,7 +121,8 @@ class MCTSConfig:
     def get_turns(self):
         return self.turns
 
-
+    def set_puct(self, puct):
+        self.puct = puct
 
 def main():
     pass
