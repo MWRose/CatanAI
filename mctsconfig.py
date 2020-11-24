@@ -3,20 +3,20 @@ import os
 import pandas as pd
 import glob
 
-os.environ['MAIN_DIR'] = "/Users/evanvonoehsen/Documents/ai"
+os.environ['MAIN_DIR'] = "/Users/evanvonoehsen/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 
 class MCTSConfig:
     """Creates an holds an MCTS config"""
 
     def __init__(self, iterations: int, cp: float,
-                 max_tree_size: int, min_visits: int, rave: bool, num_games: int):
+                 max_tree_size: int, min_visits: int, rave: bool, puct: bool, num_games: int):
         self.iterations = iterations
         self.cp = cp
         self.max_tree_size = max_tree_size
         self.min_visits = min_visits
         self.rave = rave
-        self.puct = False
+        self.puct = puct
         self.mcts_line = ""
         self.name = str(datetime.now().time())
         self.config_path = configs_directory + self.name
@@ -53,7 +53,7 @@ class MCTSConfig:
             "UseParser=false",
             "ChatNegotiation=true",
             "FullyObservable=true",
-            "PlayerToStart=-1",
+            "PlayerToStart=0",
             "~",
             self.name,
             self.mcts_line,
@@ -71,7 +71,10 @@ class MCTSConfig:
         """
         Takes a MCTSConfig and returns its fitness (win rate)
         """
+
         file_name = glob.glob('results/'+ self.get_name() + '*' + '/summary.txt')[0]
+        print("glob found results file:")
+        print(file_name)
         # num_games = self.get_num_games()
         # # Look in results folder for this name
         # df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
@@ -89,6 +92,7 @@ class MCTSConfig:
                     self.fitness = float(line_sep[1])
                     break
 
+        return self.fitness
 
     def get_iterations(self):
         return self.iterations
@@ -123,7 +127,8 @@ class MCTSConfig:
     def get_turns(self):
         return self.turns
 
-
+    def set_puct(self, puct):
+        self.puct = puct
 
 def main():
     pass

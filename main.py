@@ -23,7 +23,7 @@ import csv
     - Cons: Can't match up opponents wtih different strategies
     - Pros: Runs fast, lots of transparency in the code
 """
-os.environ['MAIN_DIR'] = "/home/max/Documents/ai/"
+os.environ['MAIN_DIR'] = os.getenv('MAIN_DIR') 
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 ITERATION_RANGE = 1000
 
@@ -36,7 +36,6 @@ def simulate(args) -> int:
 def run_config(config: MCTSConfig):
     """ Take a MCTSConfig and run the specified simulation """
     config_file = config.get_config_path()
-
     # Might cause concurrent errors
     stream = os.popen("java -cp STACSettlers-1.0-bin.jar soc.robot.stac.simulation.Simulation " + config_file).read()
  
@@ -45,7 +44,7 @@ def run_config(config: MCTSConfig):
 #     file_name = glob.glob('results/'+ config.get_name() + '*' + '/results.txt')[0]
 #     num_games = config.get_num_games()
 #     # Look in results folder for this name
-#     df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
+#     df = pd.read_csv('os.getenv('MAIN_DIR') + "StacSettlers/target/' + file_name, sep='\t')
 #     total_wins = sum(df['Winner1'])
 #     win_rate = total_wins/num_games
 #     return win_rate
@@ -102,7 +101,7 @@ def main():
         seconds.append(config.get_seconds())
         turns.append(config.get_turns())
 
-    with open("/home/max/Documents/ai/CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
+    with open(os.getenv('MAIN_DIR') + "CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(["min_visits", "fitness", "games", "seconds", "turns"])
