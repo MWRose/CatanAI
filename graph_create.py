@@ -13,11 +13,12 @@ games = []
 seconds = []
 turns = []
 
-# with open("./results/iterVSrandom30g.csv", "r") as csvfile:
 csv_file_name = "./results/min_visits.csv"
 with open(csv_file_name, "r") as csvfile:
     csvreader = csv.reader(csvfile, delimiter = ",", quotechar="|")
     next(csvreader)
+
+    # Add necessary information
     for row in csvreader:
         columnone.append(round(float(row[0]), 2))
         fitness.append(round(float(row[1]), 2))

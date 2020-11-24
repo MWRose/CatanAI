@@ -8,14 +8,17 @@ os.environ['MAIN_DIR'] = os.getenv('MAIN_DIR')
 class MCTSPlayer:
     def __init__(self):
 
-        self.GENOME_SIZE = 3
+        self.GENOME_SIZE = 5
 
         self.MAX_ITERATIONS = 5000
         self.MAX_CP = 5
         self.RAVE_THRESHOLD = 0.333
         self.PUCT_THRESHOLD = 0.666
+        self.MAX_TREE_SIZE = 12000 #NOTE the actual max will be this plus 500 (see update_config)
+        self.MAX_MIN_VISITS = 5
     
         self.fitness = 0.0
+        self.fitness_runs = 0
 
         #min visits
         # self.config = MCTSConfig(0,0,0,0,0,0)
@@ -27,11 +30,18 @@ class MCTSPlayer:
         
 
     def mutate(self):
+        """
+        Randomnly assign values to each parameter per gene 
+        """
         for i in range(0,self.GENOME_SIZE):
             self.genome[i] = random.random() if random.randint(0,1) == 0 else self.genome[i]
         self.config = self.update_config()
 
     def crossover_uniform(self, other):
+        """
+        For each parameter in our genome, with some probability, assign a player object another genome
+        or keep it's original genome
+        """
         new_player = MCTSPlayer()
         self_genome = self.get_genome()
         other_genome = other.get_genome()
@@ -44,22 +54,38 @@ class MCTSPlayer:
     def fitness(self) -> float:
         return self.fitness
 
+
+        
     def calculate_fitness(self) -> float:
-        #run the simulations
+        """
+        Calculate fitness for mctsplayer object through a series of function calls
+        """
         self.run_config()
-        self.fitness = self.config.set_fitness()
+        prev_fitness_scaled = self.fitness * self.fitness_runs
+        new_fitness = float(self.config.set_fitness()) * (30.0 / float(self.config.get_seconds()))
+        self.fitness = (new_fitness + prev_fitness_scaled) / self.fitness_runs + 1
+        self.prev_fitness_scaled += 1
         return self.fitness
 
     def __eq__(self, other):
+        """
+        Define equality for object for comparison in ga_main.py
+        """
         return self.fitness == other.fitness
 
     def __lt__(self, other):
+        """
+        Define inequailty for comparison
+        """
         return self.fitness < other.fitness
 
     def get_genome(self):
         return self.genome
     
     def update_config(self):
+        """
+        Instantiates a MCTSConfig object with randomized arguments 
+        """
         # self.config = self.config
         iterations = self.genome[0] * self.MAX_ITERATIONS
         cp = self.genome[1] * self.MAX_CP
@@ -73,7 +99,9 @@ class MCTSPlayer:
         return tmpconfig
 
     def run_config(self):
-
+        """
+        Runs the STACSettlers jar file with mctsplayer's mctsconfig object
+        """
         os.chdir(os.getenv('MAIN_DIR') + "StacSettlers/target")
         """ Take a MCTSConfig and run the specified simulation """
         config_file = self.config.get_config_path()

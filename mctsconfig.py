@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import glob
 
-os.environ['MAIN_DIR'] = "/Users/evanvonoehsen/Documents/ai/"
+os.environ['MAIN_DIR'] = "/home/max/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 
 class MCTSConfig:
