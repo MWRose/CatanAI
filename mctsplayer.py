@@ -8,14 +8,17 @@ os.environ['MAIN_DIR'] = os.getenv('MAIN_DIR')
 class MCTSPlayer:
     def __init__(self):
 
-        self.GENOME_SIZE = 3
+        self.GENOME_SIZE = 5
 
         self.MAX_ITERATIONS = 5000
         self.MAX_CP = 5
         self.RAVE_THRESHOLD = 0.333
         self.PUCT_THRESHOLD = 0.666
+        self.MAX_TREE_SIZE = 12000 #NOTE the actual max will be this plus 500 (see update_config)
+        self.MAX_MIN_VISITS = 5
     
         self.fitness = 0.0
+        self.fitness_runs = 0
 
         #min visits
         # self.config = MCTSConfig(0,0,0,0,0,0)
@@ -28,7 +31,14 @@ class MCTSPlayer:
 
     def mutate(self):
         for i in range(0,self.GENOME_SIZE):
-            self.genome[i] = random.random() if random.randint(0,1) == 0 else self.genome[i]
+            choice = random.randint(0,3)
+            if choice == 0:
+                self.genome[i] = self.genome[i]
+            elif choice == 1:
+                self.genome[i] = self.genome[i] - (random.random() * (self.genome[i] / 2.0))
+            else:
+                self.genome[i] = self.genome[i] + (random.random() * ((1.0 - self.genome[i]) / 2.0))
+            
         self.config = self.update_config()
 
     def crossover_uniform(self, other):
@@ -40,21 +50,24 @@ class MCTSPlayer:
         new_player.config = new_player.update_config()
 
         return new_player
-        
-    def fitness(self) -> float:
+
+    def get_fitness(self) -> float:
         return self.fitness
 
     def calculate_fitness(self) -> float:
         #run the simulations
         self.run_config()
-        self.fitness = self.config.set_fitness()
+        prev_fitness_scaled = self.fitness * self.fitness_runs
+        new_fitness = float(self.config.set_fitness()) * (30.0 / float(self.config.get_seconds()))
+        self.fitness = (new_fitness + prev_fitness_scaled) / self.fitness_runs + 1
+        self.prev_fitness_scaled += 1
         return self.fitness
 
     def __eq__(self, other):
-        return self.fitness == other.fitness
+        return self.get_fitness() == other.get_fitness()
 
     def __lt__(self, other):
-        return self.fitness < other.fitness
+        return self.get_fitness() < other.get_fitness()
 
     def get_genome(self):
         return self.genome
@@ -68,9 +81,16 @@ class MCTSPlayer:
         rave = self.genome[2] >= self.RAVE_THRESHOLD and self.genome[2] < self.PUCT_THRESHOLD
         puct = self.genome[2] >= self.PUCT_THRESHOLD
         num_games = 4
-        tmpconfig = MCTSConfig(int(iterations), cp, 10000, 1, rave, puct, num_games)
+        max_tree_size = int((self.genome[3] * self.MAX_TREE_SIZE) + 500)
+        min_visits = int(self.genome[4] * self.MAX_MIN_VISITS)
+        tmpconfig = MCTSConfig(int(iterations), cp, max_tree_size, min_visits, rave, puct, num_games)
+
+
         # self.config = tmpconfig
         return tmpconfig
+
+    def get_config(self):
+        return self.config
 
     def run_config(self):
 

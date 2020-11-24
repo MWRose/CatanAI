@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import pandas as pd
 import glob
+import csv
 
 os.environ['MAIN_DIR'] = "/Users/evanvonoehsen/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
@@ -41,8 +42,6 @@ class MCTSConfig:
         elif self.puct:
             self.mcts_line += "|MCTS_PUCT"
 
-            
-
     def create_config_file(self):
 
         # Structure of the config file
@@ -57,9 +56,9 @@ class MCTSConfig:
             "~",
             self.name,
             self.mcts_line,
-            "Agent=3,Random,random"
+            "Agent=3,Stac,stac,TRY_N_BEST_BUILD_PLANS:0|FAVOUR_DEV_CARDS:-5"
         ]
-
+        # "Agent=3,Random,random"
         # "Agent=3,Stac,stac,TRY_N_BEST_BUILD_PLANS:0|FAVOUR_DEV_CARDS:-5"
         # If there is a file path write it
         assert self.config_path, "File path not specified for config {}".format(self.name)
@@ -126,6 +125,8 @@ class MCTSConfig:
 
     def set_puct(self, puct):
         self.puct = puct
+
+
 
 def main():
     pass
