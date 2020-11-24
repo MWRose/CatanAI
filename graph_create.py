@@ -1,8 +1,8 @@
 """
 Script for creating visualizations of the results from different parameters.
-Set csv_file_name to the folder containing the generated csv
+Set csv_file_name to the folder containing the generated csv and uncoment the
+block corresponding to the graph desired.
 """
-
 
 import csv
 from matplotlib import pyplot as plt

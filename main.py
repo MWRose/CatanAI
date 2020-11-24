@@ -4,7 +4,10 @@ https://github.com/sorinMD/StacSettlers
 
 Requires a ./config folder and a ./results folder
 Generates files config files in ./config showing the various configurations
-Output csv files in the ./results folder with the results of the given test
+Output csv files in ./results with the results of the given test
+
+More specific information from each run can be found in the
+StacSettlers target/results folder
 """
 
 from typing import Iterable
@@ -26,11 +29,10 @@ def run_config(config: MCTSConfig):
         "java -cp STACSettlers-1.0-bin.jar soc.robot.stac.simulation.Simulation " + config_file).read()
 
 
-
 def test_iterations(iters):
     """
     Loop through iters (tuple of iterations) and run them
-    and return the updated config file
+    and generate a csv file of the results
     """
     mcts_config_iterations = []
     for iterations in iters:
@@ -42,38 +44,13 @@ def test_iterations(iters):
         # Make sure the fitness is set
         mcts_config.set_fitness()
         mcts_config_iterations.append(mcts_config)
-
-    fitnesses = []
-    iteration = []
-    games = []
-    seconds = []
-    turns = []
-    for config in mcts_config_iterations:
-        fitnesses.append(config.get_fitness())
-        iteration.append(config.get_min_visits())
-        games.append(config.get_num_games())
-        seconds.append(config.get_seconds())
-        turns.append(config.get_turns())
-
-    with open(os.getenv('MAIN_DIR') + "CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',',
-                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(
-            ["iterations", "fitness", "games", "seconds", "turns"])
-        for i in range(len(fitnesses)):
-            spamwriter.writerow(
-                [iteration[i], fitnesses[i], games[i], seconds[i], turns[i]])
-
-    plt.plot(iteration, fitnesses)
-    plt.xlabel("Iterations")
-    plt.ylabel("Win Rate")
-    plt.show()
-
+    
+    write_to_csv("iterations")
 
 def test_min_visits(iters):
     """
     Loop through iters (tuple of min visit vals) and run them
-    and return the updated config file
+    and generate a csv file of the results
     """
     mcts_config_min_visits = []
     for min_visit in iters:
@@ -87,31 +64,7 @@ def test_min_visits(iters):
         mcts_config.set_fitness()
         mcts_config_min_visits.append(mcts_config)
 
-    fitnesses = []
-    min_visits = []
-    games = []
-    seconds = []
-    turns = []
-    for config in mcts_config_min_visits:
-        fitnesses.append(config.get_fitness())
-        min_visits.append(config.get_min_visits())
-        games.append(config.get_num_games())
-        seconds.append(config.get_seconds())
-        turns.append(config.get_turns())
-
-    with open(os.getenv('MAIN_DIR') + "CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',',
-                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(
-            ["min_visits", "fitness", "games", "seconds", "turns"])
-        for i in range(len(fitnesses)):
-            spamwriter.writerow(
-                [min_visits[i], fitnesses[i], games[i], seconds[i], turns[i]])
-
-    plt.plot(min_visits, fitnesses)
-    plt.xlabel("Min Visits")
-    plt.ylabel("Win Rate")
-    plt.show()
+    write_to_csv("min_visits")
 
 
 def test_cp(cps):
@@ -129,33 +82,44 @@ def test_cp(cps):
         # Make sure the fitness is set
         mcts_config.set_fitness()
         mcts_configs_cp.append(mcts_config)
+    
+    write_to_csv("cp")
 
+
+def write_to_csv(test_name, configs):
+    # Create value lists to be added to the csv
     fitnesses = []
-    cps = []
+    test_type = []
     games = []
     seconds = []
     turns = []
-    for config in mcts_configs_cp:
+    for config in configs:
         fitnesses.append(config.get_fitness())
-        cps.append(config.get_cp())
+        test_type.append(config.get_cp())
         games.append(config.get_num_games())
         seconds.append(config.get_seconds())
         turns.append(config.get_turns())
-
-    with open(os.getenv('MAIN_DIR') + "CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
+    # Write to the csv
+    with open(os.getenv('MAIN_DIR') + "CatanAI/results/" + test_name + ".csv", "w", newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(
-            ["cp", "fitness", "games", "seconds", "turns"])
+            [test_name, "fitness", "games", "seconds", "turns"])
         for i in range(len(fitnesses)):
             spamwriter.writerow(
-                [cps[i], fitnesses[i], games[i], seconds[i], turns[i]])
+                [test_type[i], fitnesses[i], games[i], seconds[i], turns[i]])
 
-    plt.plot(cps, fitnesses)
-    plt.xlabel("Exploration Constant")
+    plt.plot(test_name, fitnesses)
+    title = ""
+    if test_name == "iterations":
+        title = "Iterations"
+    elif test_name == "cp":
+        title = "Exploration Constant"
+    elif test_name == "min_visits":
+        title = "Min Visits"
+    plt.xlabel(title)
     plt.ylabel("Win Rate")
     plt.show()
-
 
 # call our ga() function here
 def main():
@@ -171,6 +135,7 @@ def main():
 
     # Min Visit Test
     # test_min_visits(range(1, 21, 2))
-    
+
+
 if __name__ == "__main__":
     main()

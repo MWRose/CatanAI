@@ -2,6 +2,9 @@ from mctsplayer import MCTSPlayer
 
 
 class Environment: 
+    """
+    Creates and holds our population
+    """
     def __init__(self, population_size: int):
         self.population_size = population_size
         self.population = []

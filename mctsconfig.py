@@ -7,7 +7,10 @@ os.environ['MAIN_DIR'] = "/home/max/Documents/ai/"
 configs_directory = os.getenv('MAIN_DIR') + "CatanAI/configs/"
 
 class MCTSConfig:
-    """Creates an holds an MCTS config"""
+    """
+    Creates an holds an MCTS config.
+    Keeps track of different MCTS parameters and where they are stored.
+    """
 
     def __init__(self, iterations: int, cp: float,
                  max_tree_size: int, min_visits: int, rave: bool, puct: bool, num_games: int):
@@ -27,23 +30,25 @@ class MCTSConfig:
         self.create_mcts_line()
         self.create_config_file()
 
+
     def create_mcts_line(self):
         """
         Creates the line to be added to the config file
         """
+        
         # Configure the line to be added to the config file
         self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MINVISITS:{min_visits}|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
               iterations=self.iterations, cp=self.cp, min_visits=self.min_visits, max_tree_size=self.max_tree_size)
-        # self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
-        #     iterations=self.iterations, cp=self.cp, max_tree_size=self.max_tree_size)
         if self.rave:
             self.mcts_line += "|MCTS_UCT_RAVE:3"
         elif self.puct:
             self.mcts_line += "|MCTS_PUCT"
 
             
-
     def create_config_file(self):
+        """
+        Generates a config file for the run in the ./config folder
+        """
 
         # Structure of the config file
         assert self.mcts_line, "MCTS Line not created"
@@ -60,12 +65,12 @@ class MCTSConfig:
             "Agent=3,Random,random"
         ]
 
-        # "Agent=3,Stac,stac,TRY_N_BEST_BUILD_PLANS:0|FAVOUR_DEV_CARDS:-5"
         # If there is a file path write it
         assert self.config_path, "File path not specified for config {}".format(self.name)
         with open(self.config_path, "w") as config_file:
             join_lines = "\n".join(lines)
             config_file.write(join_lines)
+
 
     def set_fitness(self):
         """
@@ -75,11 +80,6 @@ class MCTSConfig:
         file_name = glob.glob('results/'+ self.get_name() + '*' + '/summary.txt')[0]
         print("glob found results file:")
         print(file_name)
-        # num_games = self.get_num_games()
-        # # Look in results folder for this name
-        # df = pd.read_csv('/home/max/Documents/ai/StacSettlers/target/' + file_name, sep='\t')
-        # total_wins = sum(df['Winner1'])
-        # self.fitness = total_wins/num_games
 
         with open(file_name, "r") as file:
             lines = file.readlines()
@@ -93,6 +93,7 @@ class MCTSConfig:
                     break
 
         return self.fitness
+
 
     def get_iterations(self):
         return self.iterations
@@ -129,9 +130,3 @@ class MCTSConfig:
 
     def set_puct(self, puct):
         self.puct = puct
-
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
