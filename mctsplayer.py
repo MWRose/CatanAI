@@ -2,6 +2,7 @@ from mctsconfig import MCTSConfig
 import random
 import numpy as np
 import os
+from math import sqrt
 
 os.environ['MAIN_DIR'] = os.getenv('MAIN_DIR')
 
@@ -22,6 +23,8 @@ class MCTSPlayer:
         # NOTE the actual max will be this plus 500 (see update_config)
         self.MAX_TREE_SIZE = 12000
         self.MAX_MIN_VISITS = 5
+
+        self.NUM_GAMES = 10
 
         self.fitness = 0.0
         self.fitness_runs = 0
@@ -74,8 +77,8 @@ class MCTSPlayer:
         """
         self.run_config()
         prev_fitness_scaled = self.fitness * self.fitness_runs
-        new_fitness = float(self.config.set_fitness()) * \
-            (30.0 / float(self.config.get_seconds()))
+        new_fitness = (float(self.config.set_fitness()) + \
+            sqrt(30.0 / (float(self.config.get_seconds())/ self.NUM_GAMES))) / 2
         self.fitness = (new_fitness + prev_fitness_scaled) / \
             (self.fitness_runs + 1)
         self.fitness_runs += 1
@@ -110,10 +113,9 @@ class MCTSPlayer:
         #enable our selection strategy, will default to regular UCT if value is less than RAVE_THRESHOLD
         rave = self.genome[2] >= self.RAVE_THRESHOLD and self.genome[2] < self.PUCT_THRESHOLD
         puct = self.genome[2] >= self.PUCT_THRESHOLD
-        num_games = 4
         max_tree_size = int((self.genome[3] * self.MAX_TREE_SIZE) + 500)
         min_visits = int(self.genome[4] * self.MAX_MIN_VISITS)
-        tmpconfig = MCTSConfig(int(iterations), cp, max_tree_size, min_visits, rave, puct, num_games)
+        tmpconfig = MCTSConfig(int(iterations), cp, max_tree_size, min_visits, rave, puct, self.NUM_GAMES)
 
 
         # self.config = tmpconfig

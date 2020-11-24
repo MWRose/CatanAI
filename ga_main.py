@@ -34,11 +34,12 @@ def ga(env, pop_count, keep, select, steps):
             config = individual.get_config()
             seconds = config.get_seconds()
             turns = config.get_turns()
+            wins = config.get_fitness()
 
             round_fitnesses.append(fitness)
 
-            write_csv(str(i), str(config.get_name()), str(fitness), str(config.get_iterations(
-            )), str(seconds), str(turns))  # round, name, fitness, itereations, seconds, turns
+            write_csv(str(i), str(config.get_name()), str(fitness), str(wins), str(seconds), str(config.get_iterations(
+            )),  str(turns))  # round, name, fitness, itereations, seconds, turns
             print("individual with genome: " + str(individual.genome))
             print("fitness for bot " + str(j) +
                   "in step " + str(i) + ": " + str(fitness))
@@ -94,27 +95,28 @@ def selection(pop, k):
 
 def write_csv_header():
     with open(os.getenv('MAIN_DIR') + "CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',',
+        writer = csv.writer(csvfile, delimiter='\t',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["Iterations", "Name", "Fitness",
-                         "Games", "Seconds", "Turns"])
+        writer.writerow(["Step", "Config_Name", "Fitness", "Win%",
+                         "Duration_S", "Iterations", "Turns", ])
 
 
-def write_csv(round_num, name, fitness, iterations, seconds, turns):
+def write_csv(round_num, name, fitness, wins, seconds, iterations, turns):
     with open(os.getenv('MAIN_DIR') + "CatanAI/results/fitnesses.csv", "a") as csvfile:
-        writer = csv.writer(csvfile, delimiter=',',
+        writer = csv.writer(csvfile, delimiter='\t',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([round_num, name, fitness, iterations, seconds, turns])
+        writer.writerow([round_num, name, fitness, wins,
+                         seconds, iterations, turns])
 
 
 def main():
     """
     Initializes our ga parameters, runs ga
     """
-    POP = 4  # population size
+    POP = 8  # population size
     KEEP = 0.25  # percentage of best MCTSIndividuals we keep
     SELECT = 0.5  # portion of new pop we generate with mutate + crossover
-    STEPS = 2  # number of times we generate a new population
+    STEPS = 4  # number of times we generate a new population
 
     env = Environment(POP)
 
