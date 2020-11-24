@@ -55,12 +55,22 @@ def run_config(config: MCTSConfig):
 def test_iterations(iters):
     mcts_config_iterations = []
     for iterations in iters:
-        mcts_config = MCTSConfig(iterations, .5, 1000000, 1, False, 1)
+        mcts_config = MCTSConfig(iterations, .5, 1000000, 1, False, 30)
         run_config(mcts_config)
         mcts_config.set_fitness()
         mcts_config_iterations.append(mcts_config)
 
     return mcts_config_iterations
+
+def test_min_visits(iters):
+    mcts_config_min_visits = []
+    for min_visit in iters:
+        mcts_config = MCTSConfig(2000, .5, 1000000, min_visit, False, 30)
+        run_config(mcts_config)
+        mcts_config.set_fitness()
+        mcts_config_min_visits.append(mcts_config)
+
+    return mcts_config_min_visits
 
 # def test_cp(cps):
 #     mcts_configs_cp = []
@@ -79,15 +89,15 @@ def main():
     os.chdir(os.getenv('MAIN_DIR') + "StacSettlers/target")
     # print(os.getcwd())
     # simulate('../StacSettlers/target/config-simple.txt')
-    iteration_configs = test_iterations(range(100, 300, 100))
+    iteration_configs = test_min_visits(range(1, 21, 2))
     fitnesses = []
-    iterations = []
+    min_visits = []
     games = []
     seconds = []
     turns = []
     for config in iteration_configs:
         fitnesses.append(config.get_fitness())
-        iterations.append(config.get_iterations())
+        min_visits.append(config.get_min_visits())
         games.append(config.get_num_games())
         seconds.append(config.get_seconds())
         turns.append(config.get_turns())
@@ -95,11 +105,11 @@ def main():
     with open("/home/max/Documents/ai/CatanAI/results/fitnesses.csv", "w", newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(["iterations", "fitness", "games", "seconds", "turns"])
+        spamwriter.writerow(["min_visits", "fitness", "games", "seconds", "turns"])
         for i in range(len(fitnesses)):
-            spamwriter.writerow([iterations[i], fitnesses[i], games[i], seconds[i], turns[i]])
+            spamwriter.writerow([min_visits[i], fitnesses[i], games[i], seconds[i], turns[i]])
 
-    plt.plot(iterations, fitnesses)
+    plt.plot(min_visits, fitnesses)
     plt.xlabel("Iterations")
     plt.ylabel("Win Rate")
     plt.show()

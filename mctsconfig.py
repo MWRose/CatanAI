@@ -32,10 +32,10 @@ class MCTSConfig:
         Creates the line to be added to the config file
         """
         # Configure the line to be added to the config file
-        # self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MINVISITS:{min_visits}|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
-        #   iterations=self.iterations, cp=self.cp, min_visits=self.min_visits, max_tree_size=self.max_tree_size)
-        self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
-            iterations=self.iterations, cp=self.cp, max_tree_size=self.max_tree_size)
+        self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MINVISITS:{min_visits}|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
+              iterations=self.iterations, cp=self.cp, min_visits=self.min_visits, max_tree_size=self.max_tree_size)
+        # self.mcts_line = "Agent=1,TypedMCTS,mcts,MCTS_ITERATIONS:{iterations}|MCTS_THREADS:4|MCTS_Cp:{cp}|MCTS_TYPED_ROLLOUTS|MCTS_MAX_TREE_SIZE:{max_tree_size}|MCTS_OFFERS_LIMIT:3".format(
+        #     iterations=self.iterations, cp=self.cp, max_tree_size=self.max_tree_size)
         if self.rave:
             self.mcts_line += "|MCTS_UCT_RAVE:3"
         elif self.puct:
@@ -68,7 +68,9 @@ class MCTSConfig:
             config_file.write(join_lines)
 
     def set_fitness(self):
-        """ Takes a MCTSConfig and returns its fitness (win rate)"""
+        """
+        Takes a MCTSConfig and returns its fitness (win rate)
+        """
         file_name = glob.glob('results/'+ self.get_name() + '*' + '/summary.txt')[0]
         # num_games = self.get_num_games()
         # # Look in results folder for this name

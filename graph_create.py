@@ -1,3 +1,9 @@
+"""
+Script for creating visualizations of the results from different parameters.
+Set csv_file_name to the folder containing the generated csv
+"""
+
+
 import csv
 from matplotlib import pyplot as plt
 
@@ -8,7 +14,8 @@ seconds = []
 turns = []
 
 # with open("./results/iterVSrandom30g.csv", "r") as csvfile:
-with open("./results/min_visits.csv", "r") as csvfile:
+csv_file_name = "./results/min_visits.csv"
+with open(csv_file_name, "r") as csvfile:
     csvreader = csv.reader(csvfile, delimiter = ",", quotechar="|")
     next(csvreader)
     for row in csvreader:
@@ -62,11 +69,14 @@ with open("./results/min_visits.csv", "r") as csvfile:
 
 
     ### MIN VISITS ###
-    plt.plot(columnone, fitness, "-o")
-    plt.title("Win Rates for Different Minimum Visits")
-    plt.xlabel("Minimum Visits")
-    plt.ylabel("Win Rate ({} games)".format(int(games[0])))
-    plt.gca().set_ylim([0, 1])
-    plt.show()
+    # plt.plot(columnone, fitness, "-o")
+    # plt.title("Win Rates for Different Minimum Visits")
+    # plt.xlabel("Minimum Visits")
+    # plt.ylabel("Win Rate ({} games)".format(int(games[0])))
+    # plt.gca().set_ylim([0, 1])
+    # plt.show()
+
+
+    
 
 
